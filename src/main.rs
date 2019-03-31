@@ -1,12 +1,16 @@
 extern crate sdl2;
+extern crate rand;
 
 mod util;
 mod window;
 
+use std::time::Duration;
+
+use rand::Rng;
+
 use sdl2::pixels::{Color, PixelFormatEnum};
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
-use std::time::Duration;
 use sdl2::surface::Surface;
 use sdl2::image::{LoadSurface, InitFlag};
 use sdl2::rect::Rect;
@@ -67,8 +71,42 @@ pub fn main() -> Result<(), String> {
         }
 
         // Blit the entire spritesheet to the main window
+        // window.canvas.clear();
+        // window.canvas.copy(&sprite_sheet, None, Some(clip_rect))?;
+        // window.canvas.present();
+
+        // Set the render target to be buffer_tex
+        window.canvas.with_texture_canvas(&mut buffer_tex, |tex| {
+            tex.set_draw_color(Color::RGBA(0, 0, 0, 255));
+            tex.clear();
+            for i in 0 .. (window_size.w / sprite_clip.w) + 1 {
+                for j in 0 .. (window_size.h / sprite_clip.h) + 1 {
+                    // Generate a random glyph. NB: gen_range is [n, m)
+                    let glyph_x = rand::thread_rng().gen_range(0, 16);
+                    let glyph_y = rand::thread_rng().gen_range(3, 16);
+                    // Random color
+                    let foreground_color = Color::RGBA(
+                        rand::thread_rng().gen_range(0, 255),
+                        rand::thread_rng().gen_range(0, 255),
+                        rand::thread_rng().gen_range(0, 255),
+                        0);
+                    let background_color = Color::RGBA(
+                        rand::thread_rng().gen_range(0, 255),
+                        rand::thread_rng().gen_range(0, 255),
+                        rand::thread_rng().gen_range(0, 255),
+                        0);
+                    // Generate the source and the destination clipping rects
+                    let dest_rect = Rect::new(i * 18, j * 28, 18, 28);
+                    let src_rect = Rect::new(glyph_x * 18, glyph_y * 28, 18, 28);
+                    // Random color for sprite background
+                    tex.set_draw_color(background_color);
+                    tex.fill_rect(dest_rect).unwrap();
+                }
+            };
+        }).map_err(|err| format!("Error blitting to buffer_tex: {}", err.to_string()))?;
+        window.canvas.set_draw_color(Color::RGBA(0, 0, 0, 255));
         window.canvas.clear();
-        window.canvas.copy(&sprite_sheet, None, Some(clip_rect))?;
+        window.canvas.copy(&buffer_tex, None, None)?;
         window.canvas.present();
 
         // Wait one second
