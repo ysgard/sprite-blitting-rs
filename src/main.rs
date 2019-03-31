@@ -1,6 +1,8 @@
 extern crate sdl2;
 
+mod utils;
 mod window;
+
 
 use sdl2::pixels::Color;
 use sdl2::event::Event;
@@ -14,22 +16,8 @@ pub fn main() -> Result<(), String> {
 
     let mut window = window::Window::new("Sprite Blitting", WINDOW_WIDTH, WINDOW_HEIGHT)?;
 
-    // Initialize SDL2
-    //let sdl_context = sdl2::init()?;
-    //let video_subsystem = sdl_context.video()?;
-
-    // Create a window
-    //let window = video_subsystem.window("Sprite Blitting", WINDOW_WIDTH, WINDOW_HEIGHT)
-    //    .position_centered()
-    //    .opengl()
-    //    .build()
-    //    .map_err(|e| e.to_string())?;
-
-    //let mut canvas = window.into_canvas().build().map_err(|e| e.to_string())?;
-
-    window.canvas.set_draw_color(Color::RGB(255, 0, 0));
-    window.canvas.clear();
-    window.canvas.present();
+    window.set_color(Color::RGB(0, 0, 0));
+    window.draw();
 
     // Main event loop
     'running: loop {
