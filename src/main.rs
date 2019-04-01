@@ -14,7 +14,7 @@ use sdl2::keyboard::Keycode;
 use sdl2::surface::Surface;
 use sdl2::image::{LoadSurface, InitFlag};
 use sdl2::rect::Rect;
-use sdl2::render::TextureAccess;
+use sdl2::render::{BlendMode, TextureAccess};
 
 const WINDOW_WIDTH: u32 = 1200;
 const WINDOW_HEIGHT: u32 = 800;
@@ -31,8 +31,10 @@ pub fn main() -> Result<(), String> {
     sprite_surface.set_color_key(true, Color::RGB(0, 0, 0))?;
     // Now convert it to a texture
     let texture_creator = window.canvas.texture_creator();
-    let sprite_sheet = texture_creator.create_texture_from_surface(sprite_surface)
+    let mut sprite_sheet = texture_creator.create_texture_from_surface(sprite_surface)
         .map_err(|err| format!("Failed to create spritesheet texture: {}", err.to_string()))?;
+    // Set the blend mode to ADD
+    sprite_sheet.set_blend_mode(BlendMode::Add);
 
     // Create a 'punch' for getting the sprites out of the spritesheet
     let sprite_clip = Rect::new(0, 0, 18, 28);
@@ -101,6 +103,11 @@ pub fn main() -> Result<(), String> {
                     // Random color for sprite background
                     tex.set_draw_color(background_color);
                     tex.fill_rect(dest_rect).unwrap();
+                    // Blit the sprite
+                    sprite_sheet.set_color_mod(foreground_color.r,
+                                               foreground_color.g,
+                                               foreground_color.b);
+                    tex.copy(&sprite_sheet, src_rect, dest_rect).unwrap();
                 }
             };
         }).map_err(|err| format!("Error blitting to buffer_tex: {}", err.to_string()))?;
