@@ -9,4 +9,4 @@ spritesheet to the screen using the crate [rust-sdl2](https://github.com/Rust-SD
 * Tinting the sprite a certain color
 * Clamping the framerate to once per second
 
-[Screenshot](assets/screenshot.png)
+![Screenshot](assets/screenshot.png)
