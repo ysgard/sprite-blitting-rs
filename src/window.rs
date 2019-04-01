@@ -3,6 +3,7 @@ use sdl2::pixels::Color;
 pub struct Window {
     pub canvas: sdl2::render::Canvas<sdl2::video::Window>,
     pub event_pump: sdl2::EventPump,
+    pub timer: sdl2::TimerSubsystem,
     pub width: u32,
     pub height: u32,
     cur_color: Color,
@@ -23,9 +24,11 @@ impl Window {
 
         let canvas = window.into_canvas().build().map_err(|e| e.to_string())?;
         let event_pump = context.event_pump()?;
+        let timer_subsystem = context.timer()?;
         Ok(Window {
             canvas: canvas,
             event_pump: event_pump,
+            timer: timer_subsystem,
             width: width,
             height: height,
             cur_color: Color::RGB(255, 0, 0),
