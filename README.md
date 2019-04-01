@@ -8,3 +8,5 @@ spritesheet to the screen using the crate [rust-sdl2](https://github.com/Rust-SD
 * Blitting a portion of a spritesheet to a separate buffer (double buffering)
 * Tinting the sprite a certain color
 * Clamping the framerate to once per second
+
+[Screenshot](assets/screenshot.png)
